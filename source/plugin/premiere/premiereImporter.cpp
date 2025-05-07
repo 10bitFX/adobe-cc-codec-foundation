@@ -8,6 +8,8 @@
 #include "prstring.hpp"
 #include "string_conversion.hpp"
 
+#include <cstdint>
+
 #ifdef PRMAC_ENV
 #include <mach-o/dyld.h> //!!! hack using _NSGetExecutablePath
 #include <string>        //!!! for hack
@@ -857,14 +859,14 @@ PREMPLUGENTRY DllExport xImportEntry (
         case imGetIndFormat:
             FDN_DEBUG("imGetIndFormat");
             result = ImporterGetIndFormat(stdParms,
-                reinterpret_cast<csSDK_size_t>(param1),
+                reinterpret_cast<uintptr_t>(param1),
                 reinterpret_cast<imIndFormatRec*>(param2));
             break;
 
         case imGetSubTypeNames:
             FDN_DEBUG("imGetSubTypeNames");
             result = ImporterGetSubTypeNames(stdParms,
-                reinterpret_cast<csSDK_size_t>(param1),
+                reinterpret_cast<uintptr_t>(param1),
                 reinterpret_cast<imSubTypeDescriptionRec**>(param2));
             break;
 
@@ -891,7 +893,7 @@ PREMPLUGENTRY DllExport xImportEntry (
         case imGetIndPixelFormat:
             FDN_DEBUG("imGetIndPixelFormat");
             result = ImporterGetIndPixelFormat(stdParms,
-                reinterpret_cast<csSDK_size_t>(param1),
+                reinterpret_cast<uintptr_t>(param1),
                 reinterpret_cast<imIndPixelFormatRec*>(param2));
             break;
 
