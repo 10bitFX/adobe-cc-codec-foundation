@@ -28,7 +28,7 @@ target_sources(AfterEffectsPlugin
         $<$<PLATFORM_ID:Darwin>:mac/FNDObjC.h>
         $<$<PLATFORM_ID:Darwin>:mac/FNDControlViewController.h>
         $<$<PLATFORM_ID:Darwin>:mac/PkgInfo>
-        $<$<PLATFORM_ID:Darwin>:${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc>
+#        $<$<PLATFORM_ID:Darwin>:${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc>
 )
 
 if (NOT DEFINED Foundation_IDENTIFIER_PREFIX)
@@ -117,19 +117,22 @@ elseif (APPLE)
             ${CMAKE_BINARY_DIR}/SettingsViewController.xib)
 endif ()
 
-if (APPLE)
-    find_program(APPLE_RESOURCE Rez)
-    if (APPLE_RESOURCE)
-        add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
-                            COMMAND ${APPLE_RESOURCE} ${CMAKE_CURRENT_SOURCE_DIR}/output_module.r -define __MACH__ -define CODEC_NAME="${Foundation_CODEC_NAME}" -arch x86_64 -useDF -isysroot ${CMAKE_OSX_SYSROOT} -i "$<JOIN:$<TARGET_PROPERTY:AdobeAfterEffectsSdk,INTERFACE_INCLUDE_DIRECTORIES>,;-i;>" -o ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
-                            COMMENT "Creating macOS resource file"
-                            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/output_module.r AdobeAfterEffectsSdk
-                            VERBATIM
-                            COMMAND_EXPAND_LISTS)
-    else (APPLE_RESOURCE)
-        message(FATAL_ERROR "Can't find Rez to build macOS resource file.")
-    endif (APPLE_RESOURCE)
-endif (APPLE)
+message(OUTPUT ">>>>>")
+
+#if (APPLE)
+#    find_program(APPLE_RESOURCE Rez)
+#    if (APPLE_RESOURCE)
+#        message(OUTPUT "Creating macOS resource file")
+#        add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
+#                            COMMAND ${APPLE_RESOURCE} ${CMAKE_CURRENT_SOURCE_DIR}/output_module.r -define __MACH__ -define CODEC_NAME="${Foundation_CODEC_NAME}" -arch x86_64 -useDF -isysroot ${CMAKE_OSX_SYSROOT} -i "$<JOIN:$<TARGET_PROPERTY:AdobeAfterEffectsSdk,INTERFACE_INCLUDE_DIRECTORIES>,;-i;>" -o ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
+#                            COMMENT "Creating macOS resource file"
+#                            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/output_module.r AdobeAfterEffectsSdk
+#                            VERBATIM
+#                            COMMAND_EXPAND_LISTS)
+#    else (APPLE_RESOURCE)
+#        message(FATAL_ERROR "Can't find Rez to build macOS resource file.")
+#    endif (APPLE_RESOURCE)
+#endif (APPLE)
 
 set_target_properties(AfterEffectsPlugin
     PROPERTIES
@@ -139,9 +142,9 @@ set_target_properties(AfterEffectsPlugin
 )
 if (APPLE)
 # These could be a RESOURCE property on the target, however CMake gives a misleading warning about RESOURCE properties
-    set_source_files_properties(
-        ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
-        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+#    set_source_files_properties(
+#        ${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_OUTPUT_NAME}.rsrc
+#        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     if (XCODE)
         set_source_files_properties(
             ${CMAKE_BINARY_DIR}/SettingsViewController.xib
@@ -160,3 +163,24 @@ install(
   LIBRARY DESTINATION ${Foundation_CC_PLUGIN_INSTALL_DESTINATION}
   COMPONENT plugin
 )
+
+
+# POST_BUILD phase scripts
+
+if (APPLE)
+
+    # = code signing ==============
+    # Custom command to sign the bundle
+    if(DEFINED CODESIGN_DEVELOPER_ID_APP_IDENTITY)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND codesign --deep --force --verify --verbose --timestamp 
+                --sign "${CODESIGN_DEVELOPER_ID_APP_IDENTITY}"
+                "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>"
+        )
+    else()
+        message(FATAL_ERROR "APPLE Developer ID Application not defined (CODESIGN_DEVELOPER_ID_APP_IDENTITY). ${PROJECT_NAME} bundle cannot be signed and will be blocked by MacOS Gatekeeper")
+    endif()
+    # END code signing ===============
+
+endif (APPLE)

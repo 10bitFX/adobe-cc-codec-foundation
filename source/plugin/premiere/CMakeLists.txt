@@ -98,3 +98,24 @@ install(
   LIBRARY DESTINATION ${Foundation_CC_PLUGIN_INSTALL_DESTINATION}
   COMPONENT plugin
 )
+
+
+# POST_BUILD phase scripts
+
+if (APPLE)
+
+    # = code signing ==============
+    # Custom command to sign the bundle
+    if(DEFINED CODESIGN_DEVELOPER_ID_APP_IDENTITY)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND codesign --deep --force --verify --verbose --timestamp 
+                --sign "${CODESIGN_DEVELOPER_ID_APP_IDENTITY}"
+                "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>"
+        )
+    else()
+        message(FATAL_ERROR "APPLE Developer ID Application not defined (CODESIGN_DEVELOPER_ID_APP_IDENTITY). ${PROJECT_NAME} bundle cannot be signed and will be blocked by MacOS Gatekeeper")
+    endif()
+    # END code signing ===============
+
+endif (APPLE)
