@@ -13,7 +13,10 @@ if(MSVC)
     # add_compile_options(/arch:AVX2)
     # may want to use this for specific source files
 else()
-    add_compile_options(-msse4.1)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+        # Generate code that uses SSE4.1 instructions, a specific set of SIMD (Single Instruction, Multiple Data) instructions available on most Intel/AMD CPU
+        add_compile_options(-msse4.1)
+    endif()
 endif()
 
 # library dependencies
