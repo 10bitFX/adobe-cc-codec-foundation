@@ -82,6 +82,7 @@ set_target_properties(PremierePlugin
     PROPERTIES
 	    BUNDLE TRUE
 	    MACOSX_BUNDLE_GUI_IDENTIFIER ${Foundation_IDENTIFIER_PREFIX}.pr
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${Foundation_IDENTIFIER_PREFIX}.pr
 )
 
 if (APPLE)

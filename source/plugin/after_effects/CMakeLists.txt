@@ -139,6 +139,7 @@ set_target_properties(AfterEffectsPlugin
 	    BUNDLE TRUE
 	    MACOSX_BUNDLE_GUI_IDENTIFIER ${${PROJECT_NAME}_OSX_BUNDLE_IDENTIFIER}
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/mac/MacOSXBundleInfo.plist.in
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${Foundation_IDENTIFIER_PREFIX}.aex"
 )
 if (APPLE)
 # These could be a RESOURCE property on the target, however CMake gives a misleading warning about RESOURCE properties
