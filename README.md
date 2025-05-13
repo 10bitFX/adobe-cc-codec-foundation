@@ -42,9 +42,12 @@ NSIS is required for win32 installer builds.
 
 [http://nsis.sourceforge.net/Main_Page](http://nsis.sourceforge.net/Main_Page)
 
-### Adobe CC 2019 SDKs
+### Adobe SDKs
 
 The following SDKs are required from Adobe.
+
+- After Effects Plug-in SDK (App version: 2025, Download Version: 25.2 - Dec 2024)
+- Premiere Pro Plugin SDK (App version: 2024, Download Version: v1 - Mar 2024)
 
 <https://console.adobe.io/downloads>
 
