@@ -23,13 +23,19 @@ add_library(CodecRegistration
 # used so we can look up install location from code, name log files, label dialog boxes
 target_compile_definitions(CodecRegistration PUBLIC "FOUNDATION_CODEC_NAME=\"${Foundation_CODEC_NAME}\"")
 
-target_link_libraries(CodecRegistration
-    nlohmann_json::nlohmann_json
-     $<$<PLATFORM_ID:Windows>:StackWalker>
-)
+if (WIN32)
+    target_link_libraries(CodecRegistration
+        nlohmann_json
+        $<$<PLATFORM_ID:Windows>:StackWalkerSdk>
+    )
+else()
+    target_link_libraries(CodecRegistration
+        nlohmann_json::nlohmann_json
+    )
+endif ()
+
 
 target_include_directories(CodecRegistration
-    PRIVATE
     INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/
 )

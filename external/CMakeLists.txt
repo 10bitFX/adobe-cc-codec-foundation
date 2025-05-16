@@ -13,6 +13,19 @@ add_subdirectory(googletest)
 
 if (WIN32)
     add_subdirectory(StackWalker)
+
+    # Construct StackWalkerSdk from StackWalker so that it can be dynamically used in generated projects
+    add_library(StackWalkerSdk INTERFACE)
+    target_link_libraries(StackWalkerSdk INTERFACE StackWalker)
+    target_sources(StackWalkerSdk
+        INTERFACE
+            ${CMAKE_CURRENT_LIST_DIR}/StackWalker/Main/StackWalker/StackWalker.h
+    )
+    target_include_directories(StackWalkerSdk 
+        INTERFACE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/StackWalker/Main/StackWalker>
+    )
+    
 endif ()
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
