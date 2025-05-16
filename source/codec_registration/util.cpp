@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <stdexcept>
 
 template<int SRC_FOR_DEST0, int SRC_FOR_DEST1, int SRC_FOR_DEST2, int SRC_FOR_DEST3,
     typename SRC_CHANNEL_TYPE, typename STRIDET,
